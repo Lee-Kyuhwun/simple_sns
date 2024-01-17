@@ -25,14 +25,18 @@ public class UserService {
     public User join(String userName, String password) {
 
         // 회원가입 하는 userName으로 이미 가입된 유저가 있는지 확인
-        Optional<UserEntity> userEntity = userEntityRepository.findByUserName(userName);
+        userEntityRepository.findByUserName(userName).ifPresent(it -> {
+            throw new SnsApplicatoinException();
+        });
+
 
 
         // 없으면 회원가입 진행
-        userEntityRepository.save(new User(userName, password));
+        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, password));
 
 
-        return new User();
+
+        return User.fromEntity(userEntity);
     }
 
 

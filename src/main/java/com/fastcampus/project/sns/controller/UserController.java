@@ -2,9 +2,13 @@
 package com.fastcampus.project.sns.controller;
 
 
+import com.fastcampus.project.sns.controller.request.UserJoinRequest;
+import com.fastcampus.project.sns.controller.response.UserJoinResponse;
+import com.fastcampus.project.sns.model.User;
 import com.fastcampus.project.sns.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,9 +19,9 @@ public class UserController {
     private final UserService userService;
 
 
-    // TODO: 회원가입 구현
     @PostMapping("/join")
-    public void join(String userName, String password) {
-        userService.join(String userName, String password);
+    public void join(@RequestBody UserJoinRequest userJoinRequest) {
+        User user = userService.join(userJoinRequest.getUserName(), userJoinRequest.getPassword());
+        UserJoinResponse response = UserJoinResponse.fromEntity(user);
     }
 }
