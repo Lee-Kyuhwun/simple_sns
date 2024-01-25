@@ -1,0 +1,9 @@
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:postgresql://prod-db-host:5432/proddb
+    username: produser
+    password: prodpassword
+  jpa:
+    hibernate:
+      ddl-auto: validate
