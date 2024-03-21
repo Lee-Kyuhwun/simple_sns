@@ -2,6 +2,7 @@ package com.fastcampus.project.sns.controller;
 
 
 import com.fastcampus.project.sns.controller.request.UserJoinRequest;
+import com.fastcampus.project.sns.exception.ErrorCode;
 import com.fastcampus.project.sns.exception.SnsApplicatoinException;
 import com.fastcampus.project.sns.model.User;
 import com.fastcampus.project.sns.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.mock;
@@ -37,6 +39,8 @@ public class UserControllerTest {
     private UserService userService;
 
 
+
+
     @Test
     @DisplayName("회원가입")
    public void signup() throws Exception {
@@ -57,7 +61,7 @@ public class UserControllerTest {
 
 
     @Test
-    @DisplayName("회원가입시 이미 회원가입된 유저네임으로 회원가입을 할 수 없다.")
+    @DisplayName("회원가입시 이미 회원가입된 userName으로 회원가입을 할 수 없다.")
     public void signUpFail() throws Exception {
         String userName = "username";
         String password = "password";
@@ -65,7 +69,7 @@ public class UserControllerTest {
         //mocking이란 실제 객체를 만들지 않고 가짜 객체를 만들어서 테스트를 진행하는 것이다.
 
         //TODO: implement
-        when(userService.join()).thenThrow(new SnsApplicatoinException());
+        when(userService.join()).thenThrow(new SnsApplicatoinException(ErrorCode.DUPLICATED_USERNAME,""));
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)

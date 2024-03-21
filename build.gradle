@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.7.6'
+	id 'org.springframework.boot' version '3.2.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id "com.github.node-gradle.node" version "3.3.0" // node를 사용할 수 있게 해주는 플러그인
 }
@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
@@ -57,8 +57,8 @@ task cleanFrontEnd(type: Delete) {
 	delete "$projectDir/front-end/static", "$projectDir/front-end/node_modules" // 'front-end/static' 폴더와 'front-end/node_modules' 폴더를 삭제한다.
 }
 
-npmBuild.dependsOn npmInstall
-copyFrontEnd.dependsOn npmBuild
-compileJava.dependsOn copyFrontEnd
-
-clean.dependsOn cleanFrontEnd
+//npmBuild.dependsOn npmInstall
+//copyFrontEnd.dependsOn npmBuild
+//compileJava.dependsOn copyFrontEnd
+//
+//clean.dependsOn cleanFrontEnd

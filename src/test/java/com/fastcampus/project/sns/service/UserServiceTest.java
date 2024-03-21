@@ -7,9 +7,11 @@ import com.fastcampus.project.sns.repository.UserEntityRepository;
 import org.apache.catalina.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
@@ -32,6 +34,10 @@ class UserServiceTest {
     // MockBean을 사용하면, 실제 빈을 사용하는 것처럼 테스트를 진행할 수 있다.
     private UserEntityRepository userEntityRepository;
 
+    @MockBean
+    private BCryptPasswordEncoder encoder;
+
+
     @Test
     void 회원가입_정상적으로_동작하는지_확인() {
         //given
@@ -40,6 +46,7 @@ class UserServiceTest {
 
         //mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());// 회원가입을 한적이 없기때문에 Optional.empty()를 반환한다.
+        when(encoder.encode(password)).thenReturn("encrypt_password");// 비밀번호를 암호화하면 password를 반환한다.
         when(userEntityRepository.save(any())).thenReturn(Optional.of(UserEntityFixture.get(userName, password)));// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
         // any()는 어떤 인자가 들어와도 상관없다는 의미이다.
         // Opriotnal.of()는 Optional 객체를 생성하는 메소드이다.
@@ -62,6 +69,7 @@ class UserServiceTest {
 
         //mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));// 회원가입을 한적이 없기때문에 Optional.empty()를 반환한다.
+        when(encoder.encode(password)).thenReturn("encrypt_password");// 비밀번호를 암호화하면 password를 반환한다.
         when(userEntityRepository.save(any())).thenReturn(Optional.of(fixture));// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
         // any()는 어떤 인자가 들어와도 상관없다는 의미이다.
         // Opriotnal.of()는 Optional 객체를 생성하는 메소드이다.

@@ -9,8 +9,10 @@ package com.fastcampus.project.sns.controller.response;
 import com.fastcampus.project.sns.model.User;
 import com.fastcampus.project.sns.model.UserRole;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 public class UserJoinResponse {
 
     private String userName;

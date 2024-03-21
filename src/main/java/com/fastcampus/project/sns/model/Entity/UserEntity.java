@@ -2,14 +2,11 @@ package com.fastcampus.project.sns.model.Entity;
 
 
 import com.fastcampus.project.sns.model.UserRole;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 
@@ -32,9 +29,16 @@ import java.sql.Timestamp;
 @Where(clause = "delete_at is NULL")
 // @Where는 엔티티를 조회할 때 사용되는 SQL을 재정의하는 어노테이션이다.
 // delete_at이 null인 데이터만 조회하도록 설정
+/*
+* @SQLDelete와 @Where는 논리 삭제를 구현하기 위해 사용된다.
+* 필수 필드가 없다면 @RequiredArgsConstructor도 매개변수가 없는 생성자를 생성하고
+* @NoArgsConstructor도 매개변수가 없는 생성자를 생성한다.
+* 따라서 이럴경우 @RequiredArgsConstructor와 @NoArgsConstructor는 같은 역할을 한다.
+* */
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NonNull // @NonNull은 필드에 null을 허용하지 않는다는 의미이다.
     // GenerationType.IDENTITY는 기본 키 생성을 데이터베이스에 위임하는 방법이다.
     private Integer id;
 
