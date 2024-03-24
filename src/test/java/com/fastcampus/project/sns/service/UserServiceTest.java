@@ -1,5 +1,6 @@
 package com.fastcampus.project.sns.service;
 
+import com.fastcampus.project.sns.exception.ErrorCode;
 import com.fastcampus.project.sns.exception.SnsApplicatoinException;
 import com.fastcampus.project.sns.fixture.UserEntityFixture;
 import com.fastcampus.project.sns.model.Entity.UserEntity;
@@ -47,7 +48,7 @@ class UserServiceTest {
         //mocking
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());// 회원가입을 한적이 없기때문에 Optional.empty()를 반환한다.
         when(encoder.encode(password)).thenReturn("encrypt_password");// 비밀번호를 암호화하면 password를 반환한다.
-        when(userEntityRepository.save(any())).thenReturn(Optional.of(UserEntityFixture.get(userName, password)));// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
+        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(userName, password));// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
         // any()는 어떤 인자가 들어와도 상관없다는 의미이다.
         // Opriotnal.of()는 Optional 객체를 생성하는 메소드이다.
 
@@ -75,9 +76,9 @@ class UserServiceTest {
         // Opriotnal.of()는 Optional 객체를 생성하는 메소드이다.
 
         //when
-        Assertions.assertThrows(SnsApplicatoinException.class, () -> userService.join(userName, password)); // 회원가입을 하면 SnsApplicatoinException.class를 반환한다.
-        // assertThrows()는 예외가 발생하는지 확인하는 메소드이다.
-
+        SnsApplicatoinException e = assertThrows(SnsApplicatoinException.class, () -> userService.join(userName, password));// 회원가입을 하면 SnsApplicatoinException.class를 반환한다.
+// assertThrows()는 예외가 발생하는지 확인하는 메소드이다.
+        Assertions.assertEquals(ErrorCode.DUPLICATED_USERNAME, e.getErrorCode());
 
         //then
     }
@@ -90,13 +91,14 @@ class UserServiceTest {
         String userName = "username";
         String password = "password";
 
-        UserEntity fixture = UserEntityFixture.get(userName, password);
+        UserEntity fixture = UserEntityFixture.get(userName, password); // Fixture란 테스트에서 사용하는 데이터를 의미한다.
 
         //when
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
-        when(userEntityRepository.save(any())).thenReturn(Optional.of(mock(UserEntity.class)));// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
+//        when(userEntityRepository.save(any())).thenReturn(Optional.of(mock(UserEntity.class)));// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
+        when(encoder.matches(password, fixture.getPassword())).thenReturn(true); // matches는 암호화된 비밀번호와 비교하는 메소드이다.
 
-        Assertions.assertThrows(SnsApplicatoinException.class, () -> userService.login(userName, password)); // 회원가입을 하면 SnsApplicatoinException.class를 반환한다.
+        Assertions.assertDoesNotThrow(() -> userService.login(userName, password)); // 회원가입을 하면 SnsApplicatoinException.class를 반환한다.
         // assertThrows()는 예외가 발생하는지 확인하는 메소드이다.
 
 
@@ -104,23 +106,26 @@ class UserServiceTest {
     }
 
     @Test
-    void 로그인시_userName으로_회원가입한_유저가_있는경우() {
+    void 로그인시_userName으로_회원가입한_유저가_없는_경우(){
         //given
         String userName = "username";
         String password = "password";
-        String wrongPassword = "wrongPassword";
-
-        UserEntity fixture = UserEntityFixture.get(userName, password);
 
         //when
-        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.of(fixture));// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
+        when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
 
-        Assertions.assertThrows(SnsApplicatoinException.class, () -> userService.login(userName, wrongPassword)); // 회원가입을 하면 SnsApplicatoinException.class를 반환한다.
-        // assertThrows()는 예외가 발생하는지 확인하는 메소드이다.
-
+        SnsApplicatoinException e = assertThrows(SnsApplicatoinException.class, () -> userService.login(userName, password));// 회원가입을 하면 SnsApplicatoinException.class를 반환한다.
+// assertThrows()는 예외가 발생하는지 확인하는 메소드이다.
 
         //then
+        Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
+
     }
+
+
+
+
+
 
 
     @Test
@@ -133,11 +138,14 @@ class UserServiceTest {
         //when
         when(userEntityRepository.findByUserName(userName)).thenReturn(Optional.empty());// 회원가입을 하면 Optional.of(mock(UserEntity.class))를 반환한다.
 
-        Assertions.assertThrows(SnsApplicatoinException.class, () -> userService.login(userName, password)); // 회원가입을 하면 SnsApplicatoinException.class를 반환한다.
-        // assertThrows()는 예외가 발생하는지 확인하는 메소드이다.
-
+        SnsApplicatoinException e = assertThrows(SnsApplicatoinException.class, () -> userService.login(userName, password));// 회원가입을 하면 SnsApplicatoinException.class를 반환한다.
+// assertThrows()는 예외가 발생하는지 확인하는 메소드이다.
+        Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, e.getErrorCode());
 
         //then
     }
+
+
+
 
 }

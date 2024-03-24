@@ -6,10 +6,13 @@ import com.fastcampus.project.sns.exception.SnsApplicatoinException;
 import com.fastcampus.project.sns.model.Entity.UserEntity;
 import com.fastcampus.project.sns.model.User;
 import com.fastcampus.project.sns.repository.UserEntityRepository;
+import com.fastcampus.project.sns.util.JwtTokenUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 
@@ -21,6 +24,14 @@ public class UserService {
 
 
     private final BCryptPasswordEncoder encoder;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+
+    @Value("${jwt.token.expired-time-ms}")
+    private Long expireTimeMs;
+
 
 
 
@@ -56,7 +67,6 @@ public class UserService {
 
 
         // 토큰 생성
-
-        return "";
+        return JwtTokenUtils.generateToken(username, secretKey, expireTimeMs);
     }
 }

@@ -16,7 +16,7 @@ public class SnsApplicatoinException extends RuntimeException{
 
     private String message;
 
-    public SnsApplicatoinException(ErrorCode errorCode) {
+    public SnsApplicatoinException(ErrorCode errorCode) { // 에러코드만 받는 생성자
         this.errorCode = errorCode;
         this.message = null;
     }

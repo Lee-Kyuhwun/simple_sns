@@ -39,21 +39,19 @@ public class UserControllerTest {
     private UserService userService;
 
 
-
-
     @Test
     @DisplayName("회원가입")
-   public void signup() throws Exception {
+    public void signup() throws Exception {
         String userName = "username";
         String password = "password";
 
         //TODO: MOcking
-        when(userService.join(userName,password)).thenReturn(mock(User.class));
+        when(userService.join(userName, password)).thenReturn(mock(User.class));
 
         mockMvc.perform(post("/api/v1/users/join")
-                .contentType(MediaType.APPLICATION_JSON) // 컨텐트타입이란 주석: 요청의 본문에 어떤 형식의 데이터가 담겨있는지 알려주는 역할을 한다.
-                // TODO: 리퀘스트 바디 채우기
-                .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, password)))) // TODO: objectMapper.writeValueAsBytes()가 무엇인지 알아보기
+                        .contentType(MediaType.APPLICATION_JSON) // 컨텐트타입이란 주석: 요청의 본문에 어떤 형식의 데이터가 담겨있는지 알려주는 역할을 한다.
+                        // TODO: 리퀘스트 바디 채우기
+                        .content(objectMapper.writeValueAsBytes(new UserJoinRequest(userName, password)))) // TODO: objectMapper.writeValueAsBytes()가 무엇인지 알아보기
                 .andDo(print()) // TODO: print()가 무엇인지 알아보기
                 // andDo(print())를 사용하면 요청과 응답을 콘솔에 출력할 수 있다.
                 .andExpect(status().isOk());
@@ -69,7 +67,7 @@ public class UserControllerTest {
         //mocking이란 실제 객체를 만들지 않고 가짜 객체를 만들어서 테스트를 진행하는 것이다.
 
         //TODO: implement
-        when(userService.join()).thenThrow(new SnsApplicatoinException(ErrorCode.DUPLICATED_USERNAME,""));
+        when(userService.join(userName, password)).thenThrow(new SnsApplicatoinException(ErrorCode.DUPLICATED_USERNAME));
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -87,7 +85,7 @@ public class UserControllerTest {
         String password = "password";
 
         //TODO: MOcking
-        when(userService.login()).thenThrow(new SnsApplicatoinException());
+        when(userService.login(userName, password)).thenReturn("test_token");
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON) // 컨텐트타입이란 주석: 요청의 본문에 어떤 형식의 데이터가 담겨있는지 알려주는 역할을 한다.
@@ -105,7 +103,7 @@ public class UserControllerTest {
         String password = "password";
 
         //TODO: MOcking
-        when(userService.login()).thenThrow(new SnsApplicatoinException());
+        when(userService.login(userName, password)).thenThrow(new SnsApplicatoinException(ErrorCode.USER_NOT_FOUND));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON) // 컨텐트타입이란 주석: 요청의 본문에 어떤 형식의 데이터가 담겨있는지 알려주는 역할을 한다.
@@ -124,7 +122,7 @@ public class UserControllerTest {
         String password = "password";
 
         //TODO: MOcking
-        when(userService.login()).thenThrow(new SnsApplicatoinException());
+        when(userService.login(userName, password)).thenThrow(new SnsApplicatoinException(ErrorCode.INVALID_PASSWORD));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .contentType(MediaType.APPLICATION_JSON) // 컨텐트타입이란 주석: 요청의 본문에 어떤 형식의 데이터가 담겨있는지 알려주는 역할을 한다.
